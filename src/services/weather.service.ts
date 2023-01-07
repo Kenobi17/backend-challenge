@@ -4,6 +4,7 @@ import {
   IpApiLocationResponse,
   OpenWeatherCurrentWeatherResponse,
   OpenWeatherLocationResponse,
+  OpenWeatherForecastResponse,
 } from '../utils/interfaces';
 
 export const fetchLocation = async (city?: string): Promise<CityLocation> => {
@@ -19,17 +20,11 @@ export const fetchLocation = async (city?: string): Promise<CityLocation> => {
     const data: OpenWeatherLocationResponse[] & IpApiLocationResponse =
       await response.json();
 
-    const cityLocation = city
-      ? {
-          lat: data[0].lat,
-          lon: data[0].lon,
-          country: data[0].country,
-        }
-      : {
-          lat: data.lat,
-          lon: data.lon,
-          country: data.country,
-        };
+    const cityLocation = {
+      lat: data[0]?.lat ?? data?.lat,
+      lon: data[0]?.lon ?? data?.lon,
+      country: data[0]?.country ?? data?.country,
+    };
 
     return cityLocation;
   } catch (error) {
@@ -62,7 +57,9 @@ export const fetchCurrentWeather = async (
   }
 };
 
-export const fetchForecast = async (city: string) => {
+export const fetchForecast = async (
+  city: string
+): Promise<OpenWeatherForecastResponse> => {
   try {
     const cityLocation = await fetchLocation(city);
 
@@ -73,7 +70,7 @@ export const fetchForecast = async (city: string) => {
       ).replace('{{lon}}', cityLocation.lon.toString())}${config.OW_API_KEY}`
     );
 
-    const data: OpenWeatherCurrentWeatherResponse = await response.json();
+    const data: OpenWeatherForecastResponse = await response.json();
 
     return data;
   } catch (error) {
