@@ -6,7 +6,7 @@ import {
 } from '../services/weather.service';
 
 export const getLocationByIP = async (
-  req: Request,
+  _: Request,
   res: Response
 ): Promise<Response> => {
   try {
